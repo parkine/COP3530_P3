@@ -1,6 +1,7 @@
 from typing import Dict, List, Set, Tuple
 from collections import deque
 from obj.Movie import Movie
+from heapq import heapify, heappop 
 
 class Graph:
     #src is the user input1 & dest is the user input2
@@ -15,16 +16,29 @@ class Graph:
         self.dest_list = dest_list
 
     #calculate the weight based on criteria
+    #m1 is Standard(src or dest), m2 is Comparator
     def cal_weight(self, m1:Movie, m2:Movie) -> float:
         w:float = 0
 
-        #If the director is the same
-        if(m1.dir == m2.dir):
-            w += 5
-        for g in m1.genre:
-            if(g in m2.genre):
-                w += 1
+        #1. If the genres are the same
+        for g in m2.genres:
+            if g in m1.genres:
+                #to adjust values for different number of genres can be the same
+                w += float((1+len(m1.genres))/len(m1.genres))
+
+        for d in m2.director:
+            if d in m1.director:
+                w += float((3+len(m1.director)/len(m1.director)))
+
+        for wr in m2.writer:
+            if wr in m1.writer:
+                w += float((2+len(m1.writer)/len(m1.writer)))
             
+        if(m2.rate >= 9.0):
+            w += 2
+        elif(m2.rate >= 8.0):
+            w += 1
+
         return w
 
 
@@ -72,6 +86,10 @@ class Graph:
 
             #Lastly, make connection from 'related to dest movie' to 'dest movie'
             self.list[d_tc][self.dest.tconst] = w
+        
+        # print(self.list)
+        print(len(self.list))
+
 
     def notVisited(self, tconst: str, path: List[Tuple[str, float]]) -> int:
 
@@ -82,6 +100,20 @@ class Graph:
                 
         return 1
 
+    #input Dict(tconst:weight); output: MinHeap[5] with top 5 weight movies
+    def top_movies(self, weights:Dict[str,float]) -> List[str]:
+        
+        #convert dict to list to heapify
+        maxHeap = [(-value, key) for key, value in weights.items()]
+        #This is heapbuild in place, so O(n)
+        heapify(maxHeap)
+
+        movies = []
+        #Take top 10 movies
+        for i in range(0, 10):  # range(start, stop)
+            movies.append(heappop(maxHeap))
+
+        return movies
 
     def BFS(self):
         q = deque()
@@ -100,28 +132,23 @@ class Graph:
             last = path[len(path)-1]
 
             #max path length is 5 for now 
-
-            if last[0] == self.dest.tconst:
+            if last[0] == self.dest.tconst:                
                 #adjust weight based on the length of path
                 w1 = path[1][1]*adj[len(path)]
                 w2 = path[len(path)-1][1]*adj[len(path)]
                 
                 m1 = path[1][0]
-                m2 = path[len(path)-1][0]
-                
+                m2 = path[len(path)-2][0]
+
                 #direct connection for both src and dest
                 if(len(path) == 3):
                     w1 += w2
 
                 for m,w in [(m1,w1),(m2,w2)]:
                     if(m in weights):
-                        weights[m] = max(weights[m], w)
+                        weights[m] = round(max(weights[m], w), 2)
                     else:
-                        weights[m] = w
-                
-                
-                #TEST
-                print(path)
+                        weights[m] = round(w, 2)
 
 
             else:                
@@ -135,9 +162,10 @@ class Graph:
                             new_path.append((tc, w))
                             q.append(new_path)
 
-        print(weights)
-
-
+        top_movies = self.top_movies(weights)
+        print(top_movies)
+        print(self.src.tconst)
+        print(self.dest.tconst)
 
 
     def DFS(self):
@@ -164,26 +192,22 @@ class Graph:
                 w2 = path[len(path)-1][1]*adj[len(path)]
                 
                 m1 = path[1][0]
-                m2 = path[len(path)-1][0]
-                
+                m2 = path[len(path)-2][0]
+
                 #direct connection for both src and dest
                 if(len(path) == 3):
                     w1 += w2
 
                 for m,w in [(m1,w1),(m2,w2)]:
                     if(m in weights):
-                        weights[m] = max(weights[m], w)
+                        weights[m] = round(max(weights[m], w), 2)
                     else:
-                        weights[m] = w
+                        weights[m] = round(w, 2)
                 
-                
-                #TEST
-                print(path)
-
 
             else:                
                 #max path length is 5 for now
-                if(len(path) < 5):
+                if(len(path) <= 5):
                     # key = tconst, value = weight
                     for tc, w in self.list[last[0]].items():
                          
@@ -192,18 +216,5 @@ class Graph:
                             new_path.append((tc, w))
                             q.append(new_path)
 
-        print(weights)
-
-
-
-
-                
-    def find_similar_movies(base_movie: Movie, all_movies: List[Movie]) -> List[Movie]:
-        similar_movies = []
-        for movie in all_movies:
-            if movie is base_movie:  # Skip the base movie itself
-                continue
-            # Check if they share a director or at least one genre
-            if movie.dir == base_movie.dir or any(genre in base_movie.genre for genre in movie.genre):
-                similar_movies.append(movie)
-        return similar_movies
+        top_movies = self.top_movies(weights)
+        print(top_movies)

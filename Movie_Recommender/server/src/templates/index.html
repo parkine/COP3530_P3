@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Movie Recommender</title>
+</head>
+<body>
+    <h1>Movie Recommender</h1>
+    <h2>Please add 2 of your favorite movies</h2>
+    <form method="GET" action="/movie">
+        <input type="text" name="movie1" placeholder="Add a movie" required>
+        <input type="text" name="movie2" placeholder="Add a movie" required>
+        <button type="submit">Find</button>
+    </form>
+    <!-- <ul>
+        {% for task in tasks %}
+            <li>
+                {{ task[1] }}
+                <a href="/delete/{{ task[0] }}">Delete</a>
+            </li>
+        {% endfor %}
+    </ul> -->
+</body>
+</html>
+
+
+<!-- 
+<body>
+    <h1>ToDo List</h1>
+    <form method="post" action="/add">
+        <input type="text" name="task" placeholder="Add a task" required>
+        <button type="submit">Add</button>
+    </form>
+    <ul>
+        {% for task in tasks %}
+            <li>
+                {{ task[1] }}
+                <a href="/delete/{{ task[0] }}">Delete</a>
+            </li>
+        {% endfor %}
+    </ul>
+</body> -->
