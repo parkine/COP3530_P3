@@ -18,10 +18,13 @@ def get_movie():
 
     movie1 = request.args['movie1']
     movie2 = request.args['movie2']
+    search_type = request.args['search_type']
 
     start = time.time()
-    movie = get_rec_movie(conn, movie1, movie2)
+    recommended_movies = get_rec_movie(conn, movie1, movie2, search_type)
     end = time.time()
+
+    print(f"recommended_movies are ${recommended_movies}")
 
     print("The time of execution of above program is :",
       (end-start) * 10**3, "ms")

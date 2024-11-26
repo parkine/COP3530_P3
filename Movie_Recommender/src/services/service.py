@@ -2,7 +2,7 @@ from obj.Movie import Movie
 from obj.Graph import Graph
 from typing import Dict, List
 
-def get_rec_movie(conn, movie1, movie2) -> str:
+def get_rec_movie(conn, movie1, movie2, search_type) -> str:
     c = conn.cursor()
     #LIKE condition to be case-sensitive
     c.execute('PRAGMA case_sensitive_like=ON;')
@@ -19,26 +19,30 @@ def get_rec_movie(conn, movie1, movie2) -> str:
     m2 = movie_obj(movie2Info)
     
     #fetch movies that are similar to m1 and m2
-    c.execute(sql_build(m1, m2.tconst))
+    c.execute(sql_related_movies(m1, m2.tconst))
     m1_list = c.fetchall()
 
-    c.execute(sql_build(m2, m1.tconst))
+    c.execute(sql_related_movies(m2, m1.tconst))
     m2_list = c.fetchall()
 
     #from_obj_dict and to_obj_dict are Dict[tconst, Movie obj]
     m1_obj_dict = movie_obj_list(m1_list)
     m2_obj_dict = movie_obj_list(m2_list)
 
-    print(f"from_obj_dict length is {len(m1_obj_dict)}")
-    print(f"to_obj_dict length is {len(m2_obj_dict)}")
-
     # Create a Graph obj
     graph = Graph(m1, m2, m1_obj_dict, m2_obj_dict)
     # Connect edges based on similar categories
     graph.connect_edge()
-    graph.DFS()    
+
+    if(search_type == 'DFS'):
+        top_movies_tconst = graph.DFS()  
+    else:
+        top_movies_tconst = graph.BFS()    
+
+    c.execute(sql_movie_list(top_movies_tconst))
+    result = c.fetchall()
     
-    return movie1Info
+    return result
 
 #input: tuple of movie information; output: movie object
 def movie_obj(m_info) -> Movie:
@@ -73,7 +77,7 @@ def movie_obj_list(m_list:List) -> Dict[str,Movie]:
 
 #build an SQL query that finds similar movies to movie, but exclude 1 movie (tconst) 
 #TODO: build a proper sql 
-def sql_build(movie:Movie, tconst2:str) -> str:
+def sql_related_movies(movie:Movie, tconst2:str) -> str:
     sql = f"SELECT * FROM movie WHERE startYear BETWEEN {movie.startYear-10} AND {movie.startYear+10}"
     sql += " AND averageRating >= 7 AND numVotes >= 100"   
     sql += f" AND runtimeMinutes BETWEEN {movie.runtimeMinutes-20} AND {movie.runtimeMinutes+20}"
@@ -100,4 +104,11 @@ def sql_build(movie:Movie, tconst2:str) -> str:
     sql += f" EXCEPT SELECT * FROM movie WHERE tconst = '{movie.tconst}' OR tconst = '{tconst2}'"
 
     print(sql)    
+    return sql
+
+def sql_movie_list(top_movies_tconst:List[str]) -> str:
+    tconst_list = ', '.join(f"'{t}'" for t in top_movies_tconst)
+
+    sql = f"SELECT * FROM movie WHERE tconst IN ({tconst_list});"
+
     return sql

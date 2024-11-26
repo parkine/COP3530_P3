@@ -8,7 +8,11 @@
     <h2>Please add 2 of your favorite movies</h2>
     <form method="GET" action="/movie">
         <input type="text" name="movie1" placeholder="Add a movie" required>
-        <input type="text" name="movie2" placeholder="Add a movie" required>
+        <input type="text" name="movie2" placeholder="Add a movie" required> <br><br>
+        <input type="radio" id="DFS" name="search_type" value="DFS">
+        <label for="html">DFS</label>
+        <input type="radio" id="BFS" name="search_type" value="BFS">
+        <label for="css">BFS</label><br><br>
         <button type="submit">Find</button>
     </form>
     <!-- <ul>

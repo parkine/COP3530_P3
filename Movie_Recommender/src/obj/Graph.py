@@ -86,9 +86,6 @@ class Graph:
 
             #Lastly, make connection from 'related to dest movie' to 'dest movie'
             self.list[d_tc][self.dest.tconst] = w
-        
-        # print(self.list)
-        print(len(self.list))
 
 
     def notVisited(self, tconst: str, path: List[Tuple[str, float]]) -> int:
@@ -111,11 +108,11 @@ class Graph:
         movies = []
         #Take top 10 movies
         for i in range(0, 10):  # range(start, stop)
-            movies.append(heappop(maxHeap))
+            movies.append(heappop(maxHeap)[1])
 
         return movies
 
-    def BFS(self):
+    def BFS(self) -> List[str]:
         q = deque()
         #path is list of tconst
         path: List[Tuple[str, float]] = []
@@ -163,12 +160,11 @@ class Graph:
                             q.append(new_path)
 
         top_movies = self.top_movies(weights)
-        print(top_movies)
-        print(self.src.tconst)
-        print(self.dest.tconst)
+        
+        return top_movies
 
 
-    def DFS(self):
+    def DFS(self) -> List[str]:
         q = deque()
         #path is list of tconst
         path: List[Tuple[str, float]] = []
@@ -217,4 +213,5 @@ class Graph:
                             q.append(new_path)
 
         top_movies = self.top_movies(weights)
-        print(top_movies)
+        
+        return top_movies
