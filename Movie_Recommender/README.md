@@ -10,7 +10,7 @@ Built with **Python** and the **Flask framework**, the application provides an i
 
 ## Features
 
-- **Movie Recommendation**: Input two favorite movies, and the app will suggest movies similar to them based on predefined categories.
+- **Movie Recommendation**:  Input two favorite movies, and the app will suggest the **most similar 10 movies** based on predefined categories.
 - **Search Type**: Choose between DFS or BFS to determine how the recommendations are retrieved.
 
 ---
@@ -25,14 +25,19 @@ Built with **Python** and the **Flask framework**, the application provides an i
 
 1. Clone or download the repository.
 2. Navigate to the project directory:
-   cd Movie_Recommender
-   python3 app.py
-3. Open your browser and go to: http://localhost:5000
+```
+  cd Movie_Recommender/src
+```
+3. Run the application:
+```
+  python3 app.py
+```
+4. Open your browser and go to: http://localhost:5000
 
 ---
 
 ## How to Use
 1. Launch the app in your browser.
 2. Enter the names of two favorite movies in the provided fields.
-3. Select the search mechanism (DFS or BFS).
-4. Click the Recommend button to view a list of similar movies.
+3. Select the search algorithm (DFS or BFS).
+4. Click the find button to view a list of similar movies.
