@@ -4,42 +4,76 @@
     <title>Movie Recommender</title>
 </head>
 <body>
-    <h1>Movie Recommender</h1>
-    <h2>Please add 2 of your favorite movies</h2>
-    <form method="GET" action="/movie">
-        <input type="text" name="movie1" placeholder="Add a movie" required>
-        <input type="text" name="movie2" placeholder="Add a movie" required> <br><br>
-        <input type="radio" id="DFS" name="search_type" value="DFS">
-        <label for="html">DFS</label>
-        <input type="radio" id="BFS" name="search_type" value="BFS">
-        <label for="css">BFS</label><br><br>
-        <button type="submit">Find</button>
-    </form>
-    <!-- <ul>
-        {% for task in tasks %}
-            <li>
-                {{ task[1] }}
-                <a href="/delete/{{ task[0] }}">Delete</a>
-            </li>
-        {% endfor %}
-    </ul> -->
+    <div class="container">
+        <div class="form-container">
+            <h1>Movie Recommender</h1>
+            <h2>Please add 2 of your favorite movies</h2>
+            <form method="GET" action="/movie">
+                <input type="text" name="movie1" placeholder="Add a movie" required>
+                <input type="text" name="movie2" placeholder="Add a movie" required> <br><br>
+                <input type="radio" id="DFS" name="search_type" value="DFS">
+                <label for="html">DFS</label>
+                <input type="radio" id="BFS" name="search_type" value="BFS">
+                <label for="css">BFS</label>
+                {% if running_time %} <strong>&emsp;Time:</strong> {{running_time}} ms<br><br>
+                {% else %}<br><br>
+                {% endif %}
+                <button type="submit">Find</button>
+            </form>
+        </div>
+
+        <div class="result-container">
+            {% if recommended_movies %}
+                <h3>Recommended Movies:</h3>
+                <ul>
+                    {% for movie in recommended_movies %}
+                        <li>
+                            <strong>{{ movie[1] }}</strong> ({{ movie[2]}}) <br>
+                            Duration: {{ movie[3] }} mins<br>
+                            Genre: {{ movie[4] }}<br>
+                            Rating: {{ movie[5] }} / 10<br>
+                            Votes: {{ movie[6] }}<br>
+                            Director: {{ movie[7] }}<br>
+                            Writer: {{ movie[8] }}<br>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+    </div>
+
 </body>
+<style>
+    /* Flex container for form and result div */
+    .container {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+    }
+
+    /* Styling for the form */
+    .form-container {
+        width: 35%;
+    }
+
+    /* Styling for the recommendations */
+    .result-container {
+        width: 45%;
+    }
+
+    /* Add spacing and better appearance */
+    body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+    }
+
+    ul {
+        list-style-type: none;
+        padding: 0;
+    }
+
+    li {
+        margin-bottom: 15px;
+    }
+</style>
 </html>
-
-
-<!-- 
-<body>
-    <h1>ToDo List</h1>
-    <form method="post" action="/add">
-        <input type="text" name="task" placeholder="Add a task" required>
-        <button type="submit">Add</button>
-    </form>
-    <ul>
-        {% for task in tasks %}
-            <li>
-                {{ task[1] }}
-                <a href="/delete/{{ task[0] }}">Delete</a>
-            </li>
-        {% endfor %}
-    </ul>
-</body> -->

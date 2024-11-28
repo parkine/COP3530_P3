@@ -25,6 +25,9 @@ def get_rec_movie(conn, movie1, movie2, search_type) -> str:
     c.execute(sql_related_movies(m2, m1.tconst))
     m2_list = c.fetchall()
 
+    print(f"length of m1_list is ${len(m1_list)}")
+    print(f"length of m2_list is ${len(m2_list)}")
+
     #from_obj_dict and to_obj_dict are Dict[tconst, Movie obj]
     m1_obj_dict = movie_obj_list(m1_list)
     m2_obj_dict = movie_obj_list(m2_list)

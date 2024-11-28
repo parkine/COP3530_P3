@@ -23,14 +23,11 @@ def get_movie():
     start = time.time()
     recommended_movies = get_rec_movie(conn, movie1, movie2, search_type)
     end = time.time()
-
-    print(f"recommended_movies are ${recommended_movies}")
-
-    print("The time of execution of above program is :",
-      (end-start) * 10**3, "ms")
+    
+    running_time = (end-start) * 10**3
 
     conn.close()
-    return render_template("index.html") 
+    return render_template("index.html", recommended_movies=recommended_movies, running_time = running_time) 
 
 # @app.route('/delete/<int:task_id>')
 # def delete_task(task_id):
