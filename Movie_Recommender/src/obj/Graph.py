@@ -33,11 +33,6 @@ class Graph:
         for wr in m2.writer:
             if wr in m1.writer:
                 w += float((2+len(m1.writer)/len(m1.writer)))
-            
-        if(m2.rate >= 9.0):
-            w += 2
-        elif(m2.rate >= 8.0):
-            w += 1
 
         return w
 
@@ -54,6 +49,10 @@ class Graph:
         for s_tc, s_movie in self.src_list.items():
             #calculate the weight based on its similarity
             w:float = self.cal_weight(self.src, s_movie)
+            if(s_movie.rate >= 9):
+                w += 2
+            elif(s_movie.rate >= 1):
+                w += 1
 
             #add the related movie 'to list' of src
             self.list[self.src.tconst][s_tc] = w
@@ -72,6 +71,10 @@ class Graph:
             self.list[d_tc] = dict()
             #calculate the weight
             w:float = self.cal_weight(self.dest, d_movie)
+            if(d_movie.rate >= 9):
+                w += 2
+            elif(d_movie.rate >= 8):
+                w += 1
             
             #We need to compare each 'related to dest movie' to each 'related to src movie    
  
