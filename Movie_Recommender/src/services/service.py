@@ -79,7 +79,6 @@ def movie_obj_list(m_list:List) -> Dict[str,Movie]:
     return dict
 
 #build an SQL query that finds similar movies to movie, but exclude 1 movie (tconst) 
-#TODO: build a proper sql 
 def sql_related_movies(movie:Movie, tconst2:str) -> str:
     sql = f"SELECT * FROM movie WHERE startYear BETWEEN {movie.startYear-10} AND {movie.startYear+10}"
     sql += " AND averageRating >= 7 AND numVotes >= 100"   
