@@ -9,14 +9,25 @@
             <h1>Movie Recommender</h1>
             <h2>Please add 2 of your favorite movies</h2>
             <form method="GET" action="/movie">
-                <input type="text" name="movie1" placeholder="Add a movie" required>
-                <input type="text" name="movie2" placeholder="Add a movie" required> <br><br>
-                <input type="radio" id="DFS" name="search_type" value="DFS">
-                <label for="html">DFS</label>
+                <label for="movie1">Movie 1:</label>
+                <input type="text" id="movie1" name="movie1" placeholder="E.g., The Shawshank Redemption" required>
+                <br><br>
+                <label for="movie2">Movie 2:</label>
+                <input type="text" id="movie2" name="movie2" placeholder="E.g., The Godfather" required>
+                <br><br>
+                <label for="search_type">Search Type:</label>
+                <input type="radio" id="DFS" name="search_type" value="DFS" required>
+                <label for="DFS">DFS</label>
                 <input type="radio" id="BFS" name="search_type" value="BFS">
-                <label for="css">BFS</label>
-                {% if running_time %} <strong>&emsp;Time:</strong> {{running_time}} ms<br><br>
-                {% else %}<br><br>
+                <label for="BFS">BFS</label>
+                <br><br>
+                {% if error %}
+                    <strong style="color:red;">{{ error }}</strong><br><br>
+                {% endif %}
+                {% if running_time %} 
+                    <strong>&emsp;Time:</strong> {{ running_time }} ms<br><br>
+                {% else %}
+                    <br><br>
                 {% endif %}
                 <button type="submit">Find</button>
             </form>
@@ -28,7 +39,7 @@
                 <ul>
                     {% for movie in recommended_movies %}
                         <li>
-                            <strong>{{ movie[1] }}</strong> ({{ movie[2]}}) <br>
+                            <strong>{{ movie[1] }}</strong> ({{ movie[2] }}) <br>
                             Duration: {{ movie[3] }} mins<br>
                             Genre: {{ movie[4] }}<br>
                             Rating: {{ movie[5] }} / 10<br>
@@ -41,27 +52,22 @@
             {% endif %}
         </div>
     </div>
-
 </body>
 <style>
-    /* Flex container for form and result div */
     .container {
         display: flex;
         justify-content: space-between;
         align-items: flex-start;
     }
 
-    /* Styling for the form */
     .form-container {
         width: 35%;
     }
 
-    /* Styling for the recommendations */
     .result-container {
         width: 45%;
     }
 
-    /* Add spacing and better appearance */
     body {
         font-family: Arial, sans-serif;
         margin: 20px;

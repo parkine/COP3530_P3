@@ -2,7 +2,7 @@ from obj.Movie import Movie
 from obj.Graph import Graph
 from typing import Dict, List
 
-def get_rec_movie(conn, movie1, movie2, search_type) -> str:
+def get_rec_movie(conn, movie1, movie2, search_type) -> dict:
     c = conn.cursor()
     #LIKE condition to be case-sensitive
     c.execute('PRAGMA case_sensitive_like=ON;')
@@ -10,14 +10,18 @@ def get_rec_movie(conn, movie1, movie2, search_type) -> str:
     # c.execute(r"SELECT * FROM movie WHERE primaryTitle = '(?)'", (movie1,))
     c.execute('SELECT * FROM movie WHERE primaryTitle = (?)', (movie1,))
     movie1Info = c.fetchone()
+    if not movie1Info:
+        return {"error": f"Movie '{movie1}' not found in the database."}
 
     c.execute('SELECT * FROM movie WHERE primaryTitle = (?)', (movie2,))
     movie2Info = c.fetchone()
+    if not movie2Info:
+        return {"error": f"Movie '{movie2}' not found in the database."}
 
     #m1 & m2 are Movie obj
     m1 = movie_obj(movie1Info)
     m2 = movie_obj(movie2Info)
-    
+
     #fetch movies that are similar to m1 and m2
     c.execute(sql_related_movies(m1, m2.tconst))
     m1_list = c.fetchall()
@@ -25,27 +29,35 @@ def get_rec_movie(conn, movie1, movie2, search_type) -> str:
     c.execute(sql_related_movies(m2, m1.tconst))
     m2_list = c.fetchall()
 
+    # Check if related movies exist
+    if not m1_list or not m2_list:
+        return {"error": f"No related movies found for '{movie1}' or '{movie2}'."}
+    
+    
     print(f"length of m1_list is ${len(m1_list)}")
     print(f"length of m2_list is ${len(m2_list)}")
-
+    
     #from_obj_dict and to_obj_dict are Dict[tconst, Movie obj]
     m1_obj_dict = movie_obj_list(m1_list)
     m2_obj_dict = movie_obj_list(m2_list)
 
     # Create a Graph obj
     graph = Graph(m1, m2, m1_obj_dict, m2_obj_dict)
-    # Connect edges based on similar categories
     graph.connect_edge()
 
-    if(search_type == 'DFS'):
+    if search_type == 'DFS':
         top_movies_tconst = graph.DFS()  
     else:
         top_movies_tconst = graph.BFS()    
 
+    # If no recommendations are found
+    if not top_movies_tconst:
+        return {"error": "No recommendations found based on the provided movies."}
+
     c.execute(sql_movie_list(top_movies_tconst))
     result = c.fetchall()
-    
-    return result
+
+    return {"result": result}
 
 #input: tuple of movie information; output: movie object
 def movie_obj(m_info) -> Movie:

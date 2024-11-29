@@ -13,20 +13,30 @@ def index():
 def get_movie():
     conn = sqlite3.connect('./db/cop3530.db')
 
-    movie1 = request.args['movie1']
-    movie2 = request.args['movie2']
-    search_type = request.args['search_type']
+    movie1 = request.args.get('movie1', '').strip()
+    movie2 = request.args.get('movie2', '').strip()
+    search_type = request.args.get('search_type', '').strip()
+
+    # validation
+    if not movie1 or not movie2 or search_type not in ['DFS', 'BFS']:
+        error = "Please provide valid movie titles and select a search type."
+        return render_template('index.html', error=error)
 
     start = time.time()
-    recommended_movies = get_rec_movie(conn, movie1, movie2, search_type)
+    response = get_rec_movie(conn, movie1, movie2, search_type)
     end = time.time()
-    
-    running_time = (end-start) * 10**3
+    running_time = (end - start) * 10**3
 
     conn.close()
-    return render_template("index.html", recommended_movies=recommended_movies, running_time = running_time) 
+
+    # errors in the response
+    if "error" in response:
+        error = response["error"]
+        return render_template("index.html", error=error)
+    else:
+        recommended_movies = response["result"]
+        return render_template("index.html", recommended_movies=recommended_movies, running_time=running_time)
 
 
 if __name__ == '__main__':
     app.run(debug=True)
-
