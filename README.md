@@ -42,7 +42,7 @@ The **Movie Recommender System** is a Python-based web application that suggests
 
 1. Clone or download the repository:
 ```
-  git clone https://github.com/parkine/COP3530_P3.git
+  git clone https://github.com/parkine/Movie_Recommender.git
 ```
 2. Install Dependencies:
 ```
